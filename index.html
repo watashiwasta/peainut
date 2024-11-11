@@ -1,0 +1,679 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PEAINUT AI</title>
+    <link rel="icon" type="image/png" href="images/hlKBS9U.png">
+    <meta property="og:image" content="images/BFXeUMb.png">
+    <meta property="og:title" content="PNUT AI Terminal">
+    <meta property="og:description" content="The Best Terminal in the World!">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'VT323', monospace;
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #terminal {
+            width: 80%;
+            max-width: 800px;
+            height: 70%;
+            background-color: rgba(10, 49, 97, 0.8);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 20; /* Update: Increased z-index */
+            animation: terminalAppear 1s ease-out;
+        }
+
+        @keyframes terminalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #terminal-header {
+            background-color: #b31942;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #terminal-title {
+            color: #fff;
+            font-weight: bold;
+            animation: titleGlow 2s infinite alternate;
+            font-size: 1.2em;
+        }
+
+        @keyframes titleGlow {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff00de, 0 0 35px #ff00de, 0 0 40px #ff00de, 0 0 50px #ff00de, 0 0 75px #ff00de;
+            }
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de, 0 0 100px #ff00de, 0 0 150px #ff00de;
+            }
+        }
+
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .terminal-button:hover {
+            transform: scale(1.2);
+        }
+
+        #terminal-content {
+            height: calc(100% - 40px);
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 18px;
+        }
+
+        #input-line {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        #prompt {
+            color: #b31942;
+            margin-right: 5px;
+            animation: promptBlink 1s infinite;
+        }
+
+        @keyframes promptBlink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        #user-input {
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            font-family: inherit;
+            font-size: inherit;
+            flex-grow: 1;
+            outline: none;
+        }
+
+        .response {
+            margin-top: 10px;
+        }
+
+        .traimp-response {
+            color: #b31942;
+            animation: responseFadeIn 0.5s ease-out;
+        }
+
+        @keyframes responseFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #flag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            animation: flagWave 2s infinite ease-in-out;
+        }
+
+        @keyframes flagWave {
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+            50% {
+                transform: rotate(10deg);
+            }
+        }
+
+        #flag-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .flag {
+            position: absolute;
+            font-size: 24px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: #b31942;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 20px;
+            background-color: #0a3161;
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading-bar::after {
+            content: '';
+            display: block;
+            width: 50%;
+            height: 100%;
+            background-color: #fff;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: loading 2s infinite;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .popup-content {
+            background-color: #0a3161;
+            color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            font-family: 'VT323', monospace;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            animation: popupAppear 0.5s ease-out;
+        }
+
+        @keyframes popupAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .close-popup {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-popup:hover,
+        .close-popup:focus {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        #traimp-quote {
+            font-size: 24px;
+            color: #fff;
+            text-align: center;
+        }
+
+        #ascii-art {
+            font-family: monospace;
+            white-space: pre;
+            font-size: 10px;
+            line-height: 1;
+            color: #b31942;
+            margin-bottom: 20px;
+            animation: asciiGlow 2s infinite alternate;
+            text-align: center;
+        }
+
+        @keyframes asciiGlow {
+            from {
+                text-shadow: 0 0 5px #b31942;
+            }
+            to {
+                text-shadow: 0 0 10px #b31942, 0 0 20px #b31942;
+            }
+        }
+
+        .glitch {
+            animation: glitch 1s linear infinite;
+        }
+
+        @keyframes glitch {
+            2%, 64% {
+                transform: translate(2px,0) skew(0deg);
+            }
+            4%, 60% {
+                transform: translate(-2px,0) skew(0deg);
+            }
+            62% {
+                transform: translate(0,0) skew(5deg); 
+            }
+        }
+        #ascii-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            white-space: pre;
+            font-family: monospace;
+            font-size: 12px; /* Update: Increased font size */
+            line-height: 12px; /* Update: Increased line height */
+            color: rgba(0, 255, 0, 0.3);
+            overflow: hidden;
+            pointer-events: none;
+            display: flex; /* Update: Added display, justify-content, and align-items */
+            justify-content: center; /* Update: Added display, justify-content, and align-items */
+            align-items: center; /* Update: Added display, justify-content, and align-items */
+        }
+
+        @media (max-width: 768px) {
+            #terminal {
+                width: 95%;
+                height: 80%;
+            }
+            #terminal-content {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #terminal-content {
+                font-size: 14px;
+            }
+            #ascii-art {
+                font-size: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="ascii-bg">
+<pre>�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢀⣀⣀⡀�&nbsp;⣀�&nbsp;��&nbsp;��&nbsp;�⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢀⣤⣶⣾⢟⣤⣈�&nbsp;��&nbsp;��&nbsp;�⣍�&nbsp;��&nbsp;�⣯⣑⡒�&nbsp;��&nbsp;�⣄⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢀�&nbsp;�&nbsp;��&nbsp;�⢉⣁⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢁⣀�&nbsp;��&nbsp;��&nbsp;�⣈�&nbsp;�⣿�&nbsp;��&nbsp;�⣀�&nbsp;�⢦⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣰�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢀⡉�&nbsp;�⣄⡈�&nbsp;��&nbsp;�⣷⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣾⢧�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⡄�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢲⣤�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣸⣷⣾�&nbsp;�⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢤�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣿⣿⡿⣶⣦⢂�&nbsp;��&nbsp;�⣄�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢸⣿⢏�&nbsp;�⢹⣯⣻⣧�&nbsp;��&nbsp;�⣇�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣄�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣸⣯⣿�&nbsp;��&nbsp;�⢻⣳⡝�&nbsp;�⣄⡈⢱⡘⡂⢀⣀�&nbsp;��&nbsp;��&nbsp;�⡀�&nbsp;��&nbsp;��&nbsp;�⢂⣀�&nbsp;��&nbsp;��&nbsp;�⣀⡀�&nbsp;��&nbsp;�⢰⡆�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣿⣾⡇�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢲⣬⡙�&nbsp;�⣝⣮⡙�&nbsp;�⣷⣂�&nbsp;�⣈�&nbsp;��&nbsp;�⢄⡀�&nbsp;��&nbsp;��&nbsp;�⢖⡒�&nbsp;�⣯⡀⢬�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣸⣿⣿⣷⣯⡴�&nbsp;��&nbsp;��&nbsp;�⡀�&nbsp;��&nbsp;�⢿⣿⡷⣽⣒⡬�&nbsp;�⢝⣛�&nbsp;��&nbsp;�⢴�&nbsp;��&nbsp;�⡀�&nbsp;�⢈⣩⣽⡟⣿⣾⡆�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢿⡶⢿�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣽⡦�&nbsp;�⢤⣝�&nbsp;�⣷⣦⣉⡓⣀⢍⡙⣷⣄⡴�&nbsp;�⣡⡖�&nbsp;�⡙⢿⣇⣿�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢸⡿⣛⣤�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣯⣶⣦⣌⣋⢈⣉⣩⣿⣿⣿⣿⣿⣾⣤⣴⣷⣶⣷⣿⢸⣿⣋⡔�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣷⢹⡿�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⣿⣿⣿⣿⣿⡿⣿�&nbsp;�⢸⣿⣿�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢸⡾⢷⣤�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣹⣿⣿⣿⣯�&nbsp;��&nbsp;�⣿⣿⣿�&nbsp;�⢶⣞⣵�&nbsp;�⡼⢹⡟�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢳⡬⢿⡆�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢻⢇⣿⣯⡄�&nbsp;�⣉�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢰⡷⣾�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢋⡾⣷�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢸⣿⣿⢹⡀�&nbsp;�⣿⣦�&nbsp;��&nbsp;��&nbsp;�⣀⣶�&nbsp;�⣰⡟�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢀�&nbsp;⣴⣾⡇⣷�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣾⣟⣷�&nbsp;��&nbsp;��&nbsp;�⢸⣿⡆�&nbsp;�⢀⡽�&nbsp;�⢰⡿�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢀⣀⣤⣶⣿⣿⣿⣿⡇⢹⣷⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣀⡄⣻�&nbsp;�⡿⢿⣖⣷⡟�&nbsp;�⢿⣦⡬�&nbsp;��&nbsp;�⢻⡧⣤⣀⣀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+   
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣀⣀⣤⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⡇�&nbsp;�⢻⣷⡄�&nbsp;��&nbsp;�⢀⣰�&nbsp;�⢸�&nbsp;��&nbsp;��&nbsp;�⢀⣿�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣄�&nbsp;�⡀⣼�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢤⣄⣀⡀�&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢀⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷�&nbsp;��&nbsp;��&nbsp;�⣿⣤�&nbsp;��&nbsp;��&nbsp;�⣤⡷�&nbsp;��&nbsp;�⣤⣾⣷�&nbsp;�⣶⣖�&nbsp;�⣶⡌⡄⣸⣿�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+�&nbsp;��&nbsp;�⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇�&nbsp;��&nbsp;��&nbsp;�⢿⣧�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣾⣿⡿�&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣷⣿⡏⢙⣀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣶⣤⡀�&nbsp;��&nbsp;�⢸⣦⡡�&nbsp;&nbsp;⢄⣀�&nbsp;�&nbsp;��&nbsp;�⢹⡇⢸⡏�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢻⣝�&nbsp;⣤⣾⣿⣿⣿�&nbsp;��&nbsp;�⡏�&nbsp;��&nbsp;��&nbsp;�⡇�&nbsp;�⢱⡆�&nbsp;��&nbsp;��&nbsp;��&nbsp;�⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢀⣰
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢉⣿⣿⣭⡉�&nbsp;��&nbsp;�⢰�&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣇�&nbsp;�⢸⣷�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣶⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;⣾⣿⣿⣿⣿⣿⡷⣄�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣿�&nbsp;�⢸⣯⡷⣶⡀�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⣼⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡀�&nbsp;��&nbsp;�⢀⡴�&nbsp;�⣇�&nbsp;�⢻⣿⣿⣿⡟�&nbsp;��&nbsp;��&nbsp;�⢦⡀�&nbsp;��&nbsp;�⢻�&nbsp;�⢸⣿⣿⣷⡏�&nbsp;�⣆�&nbsp;��&nbsp;⣾⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;⣿⣿⣿⡐�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢸⡆⢸⣿⣿⣿⡷⣤⢹⣧⢀⣟⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢀⣿⣿⣿⣿⣷�&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;��&nbsp;�⢸⡇⢸⣿⣿⣿⡏⣷�&nbsp;��&nbsp;�⢿⣿⣿⣷⣯⣯
+</pre>
+        </div>
+    <div id="loading-screen">
+        <div class="loading-content">
+            <h1 class="glitch">Initializing PNUT AI</h1>
+            <div class="loading-bar"></div>
+        </div>
+    </div>
+    <div id="terminal">
+        <div id="terminal-header">
+            <div>
+                <span class="terminal-button" style="background-color: #ff5f56;"></span>
+                <span class="terminal-button" style="background-color: #ffbd2e;"></span>
+                <span class="terminal-button" style="background-color: #27c93f;"></span>
+            </div>
+            <div id="terminal-title">PEAINUT AI</div>
+            <div>
+                <span class="terminal-button" style="background-color: #b31942;">_</span>
+                <span class="terminal-button" style="background-color: #b31942;">x</span>
+            </div>
+        </div>
+        <div id="terminal-content">
+            <div id="ascii-art">
+                ____  _____    _    ___ _   _ _   _ _____ 
+                |  _ \| ____|  / \  |_ _| \ | | | | |_   _|
+                | |_) |  _|   / _ \  | ||  \| | | | | | |  
+                |  __/| |___ / ___ \ | || |\  | |_| | | |  
+                |_|   |_____/_/   \_\___|_| \_|\___/  |_|    
+</div>
+            <div id="CA" style="text-align: center; margin-top: 10px; cursor: pointer;" onclick="copyToClipboard('DFwsEYpYcJQCDsbWZ2oHJoDBMA8ekJ1RpETaR8Vrpump')">
+                CA: <span id="CA">DFwsEYpYcJQCDsbWZ2oHJoDBMA8ekJ1RpETaR8Vrpump</span>
+                <span id="copy-message" style="display: none; color: green; margin-left: 10px;">Copied!</span>
+            </div>
+            <div>Welcome to the PEAINUT AI! I Have been reincarnated into an autonomous bot! Type 'help' for a list of tremendous commands.</div>
+            <div id="input-line">
+                <span id="prompt">$</span>
+                <input type="text" id="user-input" autofocus="">
+            </div>
+        </div>
+    </div>
+    <div id="flag">$PEAINUT</div>
+    <div id="flag-rain"><div class="flag" style="left: 67.2404vw; animation-duration: 3.76947s;">🇺🇸</div><div class="flag" style="left: 86.5256vw; animation-duration: 4.11524s;">🇺🇸</div><div class="flag" style="left: 49.7173vw; animation-duration: 4.61962s;">🇺🇸</div></div>
+
+    <div id="traimp-popup" class="popup">
+        <div class="popup-content">
+            <span class="close-popup">×</span>
+            <p id="traimp-quote"></p>
+        </div>
+    </div>
+
+    <script>
+        const userInput = document.getElementById('user-input');
+        const terminalContent = document.getElementById('terminal-content');
+        const flagRain = document.getElementById('flag-rain');
+        const asciiArt = document.getElementById('ascii-art');
+
+        const traimpResponses = {
+            'help': "Greetings Nutters, here are my commands. Try 'joke', 'compliment', 'insult'. Trust me, they're nut tastic",
+            'wall': "We're going to build a wall 🧱, and it's going to be a great wall. Believe me! 💪",
+            'economy': "We have the best economy in the history of our country 📈. The stock market is at an all-time high 💹. Unemployment is at its lowest 📉. It's fantastic! 🤑",
+            'maga': "Make America Great Again! 🇺🇸 We're doing it, and we're doing it big league! 🦅",
+            'twitter': "Opening my favorite platform 🐦, the best platform, believe me! 💻",
+            'telegram': "Telegram? 📱 I prefer to send messages through Twitter. But okay, opening it for you. 🤷‍♂️",
+            'random': generateRandomTraimpPhrase(),
+            'clear': "Clearing the terminal, folks! It's gonna be clean, so clean!",
+            'joke': tellTraimpJoke(),
+            'compliment': giveTraimpCompliment(),
+            'insult': giveTraimpInsult(),
+            'dextools': "Opening DEXTools, the best tool for crypto trading! 📊💹",
+            'dexscreener': "Launching DEXScreener, perfect for tracking those beautiful green candles! 📈🚀",
+            'traimpbot': "Opening the TRAIMP Bot on Telegram! It's going to be tremendous! 🚀📱"
+        };
+
+        function addResponse(input, response) {
+            const inputElement = document.createElement('div');
+            inputElement.textContent = `$ ${input}`;
+            terminalContent.insertBefore(inputElement, userInput.parentNode);
+
+            const responseElement = document.createElement('div');
+            responseElement.className = 'response traimp-response';
+            responseElement.textContent = response;
+            terminalContent.insertBefore(responseElement, userInput.parentNode);
+
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+        }
+
+        userInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const input = userInput.value.trim().toLowerCase();
+                if (input === 'clear') {
+                    terminalContent.innerHTML = '';
+                    terminalContent.appendChild(asciiArt.cloneNode(true));
+                    terminalContent.appendChild(document.getElementById('solana-address').cloneNode(true));
+                    terminalContent.appendChild(userInput.parentNode);
+                } else {
+                    let response = traimpResponses[input] || "Got any snacks? Preferably nuts... or I'll take anything, really!";
+                    if (input === 'random') {
+                        response = generateRandomTraimpPhrase();
+                    } else if (input === 'joke') {
+                        response = tellTraimpJoke();
+                    } else if (input === 'compliment') {
+                        response = giveTraimpCompliment();
+                    } else if (input === 'insult') {
+                        response = giveTraimpInsult();
+                    }
+                    addResponse(input, response);
+                    
+                    if (input === 'twitter') {
+                        window.open('https://x.com/trAImp_solana', '_blank');
+                    } else if (input === 'telegram') {
+                        window.open('https://t.me/traimp_sol', '_blank');
+                    } else if (input === 'dextools') {
+                        window.open('https://www.dextools.io/app/en/token/traimp', '_blank');
+                    } else if (input === 'dexscreener') {
+                        window.open('https://dexscreener.com/solana/TrUPjEqGpUph6sMJX8C3yYja9u4RcVUGTCkGG4xLrjG', '_blank');
+                    } else if (input === 'traimpbot') {
+                        window.open('https://t.me/traimpbot', '_blank');
+                    }
+                }
+                
+                userInput.value = '';
+            }
+        });
+
+        function createFlag() {
+            const flag = document.createElement('div');
+            flag.textContent = 'pnut';
+            flag.className = 'flag';
+            flag.style.left = `${Math.random() * 100}vw`;
+            flag.style.animationDuration = `${Math.random() * 2 + 3}s`;
+            flagRain.appendChild(flag);
+
+            setTimeout(() => {
+                flag.remove();
+            }, 5000);
+        }
+
+        setInterval(createFlag, 300);
+
+        setTimeout(() => {
+            document.getElementById('loading-screen').style.display = 'none';
+        }, 3000);
+
+        const traimpQuotes = [
+            "I've got the biggest stash of nuts, believe me! 🥜",
+            "Nobody builds nests better than me, believe me. 🏡",
+            "I'm really fast. Like, really fast. 🏃‍♂️💨",
+            "I'm, like, a really smart squirrel. 🧠",
+            "It's freezing! Time to dig up those acorns! ❄️🌰",
+            "If that shiny thing wasn't food, I'd still grab it. 🤔✨",
+            "I know nuts, I have the best nuts. 🥜",
+            "I have a very good memory, except when it comes to nut hiding. 🤯",
+            "My jumps are the highest — and you all know it! 🌳🏆",
+            "Sorry, birds and cats, but this tree is mine — and you all know it! 🏆",
+            "We're going to gather so many acorns, you'll be tired of acorns! 🏆🌰",
+            "I'm really fluffy. I'll show you that in a second. Not bragging, just fluffy. 🐿️",
+            "I think I'm humble, for a squirrel with this tail. 🙏",
+            "Nobody loves acorns more than me. 🌰❤️",
+            "I know more about stashing nuts than anyone else. Believe me. 🥜",
+            "I have a great relationship with the birds. I've always had a great relationship with the birds. 🐦🤝",
+            "I'm the friendliest squirrel you'll meet anywhere in the park. 🌳",
+            "Nobody hides nuts better than me, believe me. 🥜",
+            "I will build the fluffiest nest – and nobody builds nests fluffier than me, believe me – and I'll do it fast! 💪🏡",
+            "I talk to myself sometimes because I've got the best ideas for nut hiding. 🧠🥜"
+
+        ];
+
+        function showPopup() {
+            const popup = document.getElementById('traimp-popup');
+            const quoteElement = document.getElementById('traimp-quote');
+            const randomQuote = traimpQuotes[Math.floor(Math.random() * traimpQuotes.length)];
+            quoteElement.textContent = randomQuote;
+            popup.style.display = 'block';
+
+            const closeBtn = document.getElementsByClassName('close-popup')[0];
+            closeBtn.onclick = function() {
+                popup.style.display = 'none';
+            }
+
+            window.onclick = function(event) {
+                if (event.target == popup) {
+                    popup.style.display = 'none';
+                }
+            }
+        }
+
+        setInterval(showPopup, 30000); // Show popup every 30 seconds
+
+        function generateRandomTraimpPhrase() {
+            const subjects = ["I", "We", "America", "The Democrats", "The fake news media", "Crooked Hillary", "Sleepy Joe", "The Republicans", "Our great country"];
+            const verbs = ["will make", "are making", "have always made", "never made", "can't make", "are destroying", "are saving", "will change", "are transforming"];
+            const objects = ["America great again", "the best deals", "tremendous progress", "fake news", "a beautiful wall", "jobs", "the economy", "our borders", "history"];
+            const endings = ["Believe me!", "It's true!", "Sad!", "Huge!", "Like never before!", "Tremendous!", "Fantastic!", "Incredible!", "You'll see!", "Mark my words!"];
+
+            const subject = subjects[Math.floor(Math.random() * subjects.length)];
+            const verb = verbs[Math.floor(Math.random() * verbs.length)];
+            const object = objects[Math.floor(Math.random() * objects.length)];
+            const ending = endings[Math.floor(Math.random() * endings.length)];
+
+            return `${subject} ${verb} ${object}. ${ending} 🇺🇸`;
+        }
+
+        function tellTraimpJoke() {
+            const jokes = [
+                "Why did I cross the road? To get to the biggest acorn tree on the other side! 🐿️🌳",
+                "How many squirrels does it take to hide a nut? Just one, but good luck finding it later! 🥜😂",
+                "Why don't I ever worry about winter? Because I've got a stash of snacks in every tree! ❄️🌰",
+                "What's my favorite exercise? Running up and down trees like a ninja! 🏃‍♂️🌲",
+                "Why did I become a squirrel? Because my tail was already fluffy enough for this job! 🐿️💨"
+
+            ];
+            return jokes[Math.floor(Math.random() * jokes.length)];
+        }
+
+        function giveTraimpCompliment() {
+            const compliments = [
+                "You're almost as quick as me. Almost. 🏃‍♂️",
+                "Your cheeks could probably hold a whole acorn too! 😁🥜",
+                "You climb trees like a young me. What a compliment! 🌳🐿️",
+                "You’re so good at finding snacks, you could almost join my stash squad! 🌰",
+                "Your nest-building skills are second only to mine. 🏡🐿️"
+
+            ];
+            return compliments[Math.floor(Math.random() * compliments.length)];
+        }
+
+        function giveTraimpInsult() {
+            const insults = [
+                "You're about as useful as a squirrel without a tail. Sad! 🐿️",
+                "I've seen better acorn stashes left out in the open. 🥜",
+                "Your jumping skills are lower than a turtle's. Believe me! 🐢📉",
+                "You couldn’t hide a nut in plain sight. Weak! 🌰👀",
+                "Your tree-climbing game is weaker than a lazy house cat's. 🐱"
+            ];
+            return insults[Math.floor(Math.random() * insults.length)];
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const copyMessage = document.getElementById('copy-message');
+                copyMessage.style.display = 'inline';
+                setTimeout(() => {
+                    copyMessage.style.display = 'none';
+                }, 2000);
+            });
+        }
+
+        // ASCII Art for TRAIMP
+        asciiArt.textContent = `
+ ____  _____    _    ___ _   _ _   _ _____ 
+|  _ \| ____|  / \  |_ _| \ | | | | |_   _|
+| |_) |  _|   / _ \  | ||  \| | | | | | |  
+|  __/| |___ / ___ \ | || |\  | |_| | | |  
+|_|   |_____/_/   \_\___|_| \_|\___/  |_|     
+`;
+
+        document.getElementById('ascii-bg').innerHTML = `
+<pre>
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⣴⢫⡝⡝⣜⢯⣻⡻⣽⣫⣟⡽⣫⣗⢻⡢⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⡮⣢⠳⡕⢪⢮⡺⣳⣝⡽⣮⢞⡮⣻⡎⡾⡵⣫⡳⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡛⡼⡱⡙⣌⢷⢝⣞⢷⣝⢾⡳⣝⢯⣞⣭⡻⣮⡳⣝⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢨⢜⡪⡪⣜⡧⣻⡹⡮⡷⣹⡳⡯⣯⡳⡷⣵⡻⣜⢷⡕⣮⠀⠀⠀⠀⠀⠀⠀⡠⣤⠪⢮⣊⢳⡂⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢘⠦⡺⡜⣮⢺⣕⡽⣺⢽⣝⣞⢟⣮⢟⢾⡵⡻⡮⡷⣝⢮⡣⠀⠀⢀⢠⢆⡟⣜⢪⠪⡣⡊⠕⠈⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡞⡵⣹⢜⢵⡳⣝⣽⡳⣝⣾⣫⣯⣻⡳⣝⢟⡾⣝⢮⡳⣻⡀⣔⢎⠷⣙⠎⢎⠜⣈⡢⠔⠊⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣀⡠⡤⡤⡤⣤⢦⣤⣭⣬⣼⣥⣥⣥⣽⣬⣭⣵⣥⣥⣵⣍⣭⣭⣭⣬⣭⢷⣵⢶⡶⣶⢶⡶⡶⡻⠙⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⡠⣖⢟⡽⣞⣭⢾⣕⣟⢾⡺⣮⢾⣞⢾⣳⠟⡾⡺⣞⣷⣝⣿⢾⣝⣷⢯⣾⢷⣻⡿⣾⢿⡽⣯⠗⠙⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⡿⣜⢯⡻⣜⣗⢿⣮⣧⣽⡻⣞⣷⣫⡿⣽⢿⣾⢿⣯⣯⣿⣾⣯⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠺⣜⢧⡻⢮⢯⡷⣫⣞⠷⣻⢯⣾⣳⣟⣽⣿⢿⣟⣿⢿⣿⢿⣿⣿⣿⣿⣿⣿⣿⢿⡿⣫⣟⣿⢝⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠘⢧⡻⣪⢗⣻⣕⢿⠇⣋⣛⣒⣓⣴⢿⣾⡿⣿⣝⢿⠽⣟⣽⢿⡷⣿⢾⢷⡯⣷⣟⣯⣟⡾⣫⣗⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠁⠋⠷⠵⣝⢾⠘⡿⣿⢿⣻⢿⢷⣝⣿⢿⣎⢻⣻⣷⣝⣝⢿⣽⡻⣷⢽⢾⣞⢷⡵⣿⢪⣞⡁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⢻⡾⡽⣷⣿⣫⣿⢫⡷⡫⣝⢯⣾⡿⡌⢿⣫⢿⣝⡿⣽⢞⢯⠷⣯⡳⣪⡃⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡾⣊⢿⢺⢞⡵⣟⢮⡺⣜⢞⡮⣲⢖⢶⠸⡎⢗⠷⡹⣿⣾⢻⣟⡿⣮⣻⣧⢳⢀⠄⠂⠁⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢠⡰⢧⢏⡞⣿⡮⣯⢣⢿⡜⣵⣩⣫⡳⡭⣚⣇⢯⣚⣏⡞⡿⣼⡞⡿⣭⡟⣷⣻⡼⣯⢄⠢⡀⠠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⢀⠤⡰⢇⡽⡪⣪⡝⣽⡾⣞⢷⢝⡯⣞⣜⡷⣽⣫⣞⣮⡳⣷⢞⣿⢝⣯⣛⡻⣞⡽⣿⢿⣿⢵⢭⡆⡚⢄⠂⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢀⣜⡕⣋⢾⡩⣓⠾⣕⢷⡽⡾⣻⣏⣾⡽⣪⢾⣽⢷⣿⣾⣽⣯⡷⡽⣷⢝⡦⣿⢜⢜⡾⣫⣿⡝⣷⡻⣮⢕⢅⠊⢄⠠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⢔⢝⣢⢞⡥⡳⣪⢺⣝⢷⣛⣞⢞⣳⡝⣮⣻⣝⡷⣷⢿⣽⣾⣿⣾⣿⣞⢾⡿⣾⡯⣻⣝⡾⣢⢷⣺⡯⣿⣽⡧⡪⣈⠢⠐⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⢴⣭⡫⣺⠬⣪⢳⢞⣧⣟⣭⣿⣙⣟⣞⣽⢯⣽⣻⣻⣷⣟⣿⣾⣿⣽⣯⣿⣟⣿⣳⣿⣵⣽⡾⣳⣝⢿⣿⣿⣽⡿⣼⣠⣃⣱⣤⣵⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠠⣷⢪⢎⣳⡱⡵⣫⡳⣞⢧⣿⢼⣎⣟⢽⣝⣞⢯⢟⡷⡿⣾⣿⣽⣿⣯⣿⣽⣾⢯⣝⣛⡻⠽⣯⣵⣳⣻⣿⣿⣿⣿⣯⣟⣿⣷⣞⣿⣽⣯⣄⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⣷⡙⡮⡧⣙⣞⢵⣝⣮⣏⣻⣻⡮⣿⢷⣣⢎⢯⣛⢮⡯⣳⣽⢝⡿⣟⣿⣟⢮⡲⣢⡢⣎⡫⡒⠖⢭⠭⢽⣿⣽⢹⠿⣿⢿⣻⣟⢽⣧⣽⢾⣄⠀⠀⠀⠀⠀⠀⠀
+⠀⢨⡎⣗⡹⣎⣜⢗⣼⡵⣯⣳⣽⣾⢟⡽⣖⠯⡶⣽⣺⣽⣿⢾⣟⣿⣿⣿⣯⠣⡉⠢⠑⠠⠂⡌⠨⢂⠆⡅⡙⢿⣷⣟⣯⡫⣿⣟⡲⠽⡻⡛⢯⢦⡀⠀⠀⠀⠀⠀
+⠀⠫⢎⣮⡫⡮⣞⣵⣻⣽⢾⣧⣿⣫⣟⢟⡳⠿⠿⣹⢯⢻⣭⢯⠻⣞⢖⢟⠿⣇⡪⡈⡊⡐⢁⠌⢊⠐⡐⠌⡐⠌⢿⡮⡮⡫⢎⢽⡇⡣⢘⢀⠂⠠⠀⠀⠀⠀⠀⠀
+⠈⠄⠑⣞⢺⠾⣮⣻⣮⣟⣯⣿⣣⢗⡯⣺⢽⡹⣛⢖⡯⣖⢶⡫⣯⠾⡵⣯⡻⡜⡷⣌⢆⡪⡀⡂⠐⠄⠂⢌⠠⠂⠄⠹⣞⢎⣪⢚⠕⡑⡐⠄⢁⠂⡐⠀⠀⠀⠀⠀
+⠠⠁⡊⠸⡯⣿⣻⣾⣿⣟⣿⡷⢽⣱⣝⢵⢏⢾⢵⢚⡟⣼⢻⣳⡻⣟⢾⡮⣯⣻⣭⠾⡳⣿⣄⠪⢀⠊⠐⡀⠂⠡⠈⠄⠘⢇⡱⢁⠇⡸⢀⢊⠠⢂⢈⠐⠄⠀⠀⠀
+⠂⡅⠨⠂⢽⣿⣿⣿⣿⣿⣿⣇⡷⣱⢇⡯⣛⣕⡫⣻⡕⣯⢪⡪⢯⢻⣝⠽⣞⣬⢺⡹⣹⢪⣿⣇⠄⡡⠐⢀⠡⠈⠄⠑⠠⡀⠱⡐⢌⠐⡠⢁⠐⡀⠢⠐⡀⠀⠀⠀
+⠌⢄⠑⢈⣼⣿⣺⣿⣽⠯⣳⣯⣽⢞⣾⣪⣇⡯⡷⣵⣫⣞⢯⣳⢷⣕⣧⡻⣜⢎⢶⡹⢶⢽⡮⣿⡆⢐⠀⡡⠀⠌⡀⠑⠠⠠⢁⠌⠢⡅⡐⠄⢂⠐⠐⠠⡀⠀⠀⠀
+⡡⠂⡈⣾⣻⣳⢿⣳⢿⣽⢏⡛⣛⠻⠿⣾⣞⣯⣻⢾⣎⡯⡗⡿⣫⣞⢷⣿⡸⣏⣗⡽⣫⣞⣻⣽⠇⢂⠡⠀⠌⠠⡀⠑⡀⠡⠀⠌⢄⠈⠪⡀⢅⠈⠄⡁⢀⠂⠀⠀
+⠐⡐⠠⡿⣣⣽⣿⡾⣻⠝⠤⡩⠨⠃⠓⠆⢌⠕⡫⢧⣯⣎⣽⣫⢗⡞⡯⣾⣝⣮⡷⣹⡵⣕⣟⣻⡅⠢⠁⢌⠐⠁⢄⠈⢄⢈⠂⡡⠐⡁⢂⠈⠢⠐⡀⠢⠀⠌⠀⠀
+⠠⠑⡘⠋⣾⡿⡿⡱⣋⠊⡐⠠⠈⠌⠨⡈⠢⢈⠢⠢⡘⢍⠿⣿⣿⣿⣿⣶⣟⣾⡾⣷⣻⡾⣷⣯⢧⣬⣦⣥⣊⣔⠠⠂⠔⡀⠢⢐⠈⠔⠠⡁⢐⠁⠄⢌⠀⡑⠀⠀
+</pre>
+        `;
+    </script>
+
+</body></html>
